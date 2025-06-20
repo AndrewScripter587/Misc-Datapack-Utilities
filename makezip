@@ -7,7 +7,7 @@ source_folder="data"
 metadata_file="pack.mcmeta"
 
 # Define the name of the zip file (you can change this)
-zip_file_name="Bossbar.zip"
+zip_file_name="DPUtils.zip"
 
 # Check if the source folder exists
 if [ ! -d "$source_folder" ]; then
