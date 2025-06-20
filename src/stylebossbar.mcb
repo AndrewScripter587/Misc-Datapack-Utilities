@@ -1,0 +1,43 @@
+function on_load minecraft:load{
+    # you can use MC-Build without its internal scoreboard but this will limit the available features
+    scoreboard objectives add mcb.internal dummy
+    scoreboard objectives add BossbarTemp dummy
+    scoreboard objectives add BossbarSettings dummy
+}
+function calculate_bossbar_percent {
+    $execute store result score value BossbarTemp run bossbar get $(bar) value
+    $execute store result score max BossbarTemp run bossbar get $(bar) max
+    scoreboard players set 100 BossbarTemp 100
+
+    scoreboard players operation percent BossbarTemp = value BossbarTemp
+    scoreboard players operation percent BossbarTemp *= 100 BossbarTemp
+    scoreboard players operation percent BossbarTemp /= max BossbarTemp
+}
+function colorize {
+    $function calculate_bossbar_percent {bar:"$(bar)"}
+    $execute if score percent BossbarTemp matches 0..35 run bossbar set $(bar) color red
+    $execute if score percent BossbarTemp matches 36..70 run bossbar set $(bar) color yellow
+    $execute if score percent BossbarTemp matches 70.. run bossbar set $(bar) color green
+}
+function stylize {
+    $function colorize {bar:"$(bar)"}
+    execute store result score Air BossbarTemp run data get entity @s Air
+    execute store result score Fire BossbarTemp run data get entity @s Fire
+    execute store result score Hurt BossbarTemp run data get entity @s HurtTime
+    execute store result score Freezing BossbarTemp run data get entity @s TicksFrozen
+
+   
+    $execute if score BedrockColorize BossbarSettings matches 1 run { {bar:"$(bar)"}
+        $execute if score Fire BossbarTemp matches 1.. run bossbar set $(bar) color red
+        $execute if score Air BossbarTemp matches ..0 run bossbar set $(bar) color blue
+        $execute if score Freezing BossbarTemp matches 140.. run bossbar set $(bar) color blue
+        $execute if score Hurt BossbarTemp matches 8..10 run bossbar set $(bar) color pink
+        $execute if score Hurt BossbarTemp matches 4..6 run bossbar set $(bar) color pink
+    } else $execute run { {bar:"$(bar)"}
+        $execute if score Fire BossbarTemp matches 1.. run bossbar set $(bar) color red
+        $execute if score Air BossbarTemp matches ..0 run bossbar set $(bar) color purple
+        $execute if score Freezing BossbarTemp matches 140.. run bossbar set $(bar) color blue
+        $execute if score Hurt BossbarTemp matches 8..10 run bossbar set $(bar) color white
+        $execute if score Hurt BossbarTemp matches 4..6 run bossbar set $(bar) color white
+    }
+}
